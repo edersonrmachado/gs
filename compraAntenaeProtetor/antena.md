@@ -22,15 +22,22 @@ $$ F/B = 10 \ log_{10} \left ( \frac{P_{frente}}{P_{costas}}\right) $$
 
 
 - 5.**Potência >5W**  A potência máxima que vamos utilizar não passa de 1.5 W, porém para ter uma margem de ganho de potencia escolhe-se 5 W como valor base(as YAGIs com 9 ou mais elementos normalmente toleram potencias maiores que 5 W)  
-- **6.Impedância 50 ohms**. A estação é projetada para a impedância de linha de 50 ohms, assim a impedância da antena também possui esse valor padrão.   
+- **6.Impedância 50 ohms**. A estação é projetada para a impedância de linha de 50 ohms, assim a impedância da antena também possui esse valor padrão.  
+
+ 
+- **8. Peso da antena**. O peso da antena é importante para não haver sobrecarga e evitar desgaste rotor. O valor máximo suportado pelo rotor é de 200kg vertocal. Porém, considerando possíveis implantações da GS com mais de uma antena, quanto menor o peso da mesma melhor.   
 
 ## Fabricantes
-https://www.c3potecnologia.com.br/  
-https://www.iftelecom.com.br/  
-https://idealantenas.com.br/  
-https://www.algcom.com.br/produtos?seg=1   
+1. https://www.c3potecnologia.com.br/  ok
+2. https://www.iftelecom.com.br/  nao tem 433MHz somente 470 pra cima
+3. https://idealantenas.com.br/   datasheets das antenas https://drive.google.com/file/d/1QoH5j6rzupdMNQitgYFmrR7_JrMOkLIz/view ok  
+4. https://www.algcom.com.br/produtos?seg=1    nao tem faixa 430MHz
+5. https://hankell.com.br/contato/ pedido de cotação
+6. https://arseletronica.com.br pedido se fazem 430 -440 MHz (406 -430MHz)
+7. https://www.tsmantenas.com.br (415-450MHz) 
 
 
 ## Fatores avaliados
 
 
+adfasdfasdfasdf 
