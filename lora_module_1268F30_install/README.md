@@ -72,6 +72,22 @@ References:
 
 ## STEP 1 - Installing OS + saving SDmicro card
 
+OS installed:
+
+```bash
+$ cat /etc/os-release
+PRETTY_NAME="Debian GNU/Linux 13 (trixie)"
+NAME="Debian GNU/Linux"
+VERSION_ID="13"
+VERSION="13 (trixie)"
+VERSION_CODENAME=trixie
+DEBIAN_VERSION_FULL=13.1
+ID=debian
+HOME_URL="https://www.debian.org/"
+SUPPORT_URL="https://www.debian.org/support"
+BUG_REPORT_URL="https://bugs.debian.org/"
+```
+
 
 ## STEP 2 - Recovering IP and MAC from a known network
 
@@ -211,42 +227,56 @@ pi@raspberrypi:~ $ ls /dev/spidev*
 Now bus 0, CS=0 and CS=1 are activated.
 
 
+## Comunicate with 1268F30 via SPI using Radiolib
+
+Once RPI is accessed by ssh:
 
 
+### STEP 1 install prerequisites on RPI 5
+1.1 RPI utils
+ - git 
+ - build-essentials: install g++ compiler, make, libc-dev (to talk with SPI chip)
+ - cmake: manage installation  
+ - liblgpio-dev: control RPI GPIOs 
 
-### CODIGO
+```bash
+sudo apt update
+sudo apt install build-essential cmake git liblgpio-dev
+```
+1.2 Radiolib 
+Before it, create a folder in Desktop for the project
 
-```c++
+```bash
+cd Desktop
+mkdir lora_module_1268F30_comm
+cd lora_module_1268F30_comm
+```
 
-#include <RadioLib.h>
-
-// CS, DIO1, RESET, BUSY
-SX1268 radio = new Module(
-  8,      // NSS / CS (SPI0 CE0)
-  22,     // DIO1
-  27,     // RESET (NRESET)
-  17      // BUSY
-);
-
-void setup() {
-  Serial.begin(115200);
-
-  int state = radio.begin(433.0);  // ajuste frequência (433/868/915)
-
-  if(state == RADIOLIB_ERR_NONE) {
-    Serial.println("LoRa iniciado com sucesso!");
-  } else {
-    Serial.print("Erro ao iniciar LoRa: ");
-    Serial.println(state);
-  }
-}
-
-void loop() {
-  radio.transmit("Hello LoRa Raspberry Pi");
-  delay(2000);
-}
+```bash
+git clone https://github.com/jgromes/RadioLib.git
+cd RadioLib/ 
+mkdir build
+cd build
+cmake ..
+make -j4
 
 ```
+#### creates a main.cpp file 
+
+
+```bash
+cd 
+cd Desktop/lora_module_1268F30_comm/
+mkdir basicTest
+cd basicTest
+nano main.cpp
+```
+Copy and save this script on file:
+
+
+PIN map 
+
+
 
 
 | LoRa RF1268F30 | Raspberry Pi 5 (GPIO) |
@@ -260,3 +290,151 @@ void loop() {
 | DIO1 | GPIO22 |
 | RESET | GPIO27 |
 | BUSY | GPIO17 |
+
+```c++
+#include <RadioLib.h>
+#include <PiHal.h>
+#include <iostream>
+
+// Pin map :
+// NSS (CS): GPIO 8
+// DIO1:     GPIO 22
+// RESET:    GPIO 27
+// BUSY:     GPIO 17
+
+// Inicialize HAL for  Raspberry Pi using SPI0 bus
+PiHal* hal = new PiHal(0);
+
+// Instantiates radio SX1268 
+// Module(hal, nss, dio1, rst, busy)
+SX1268 radio = new Module(hal, 8, 22, 27, 17);
+
+int main() {
+    std::cout << "[SX1268] Starting  basic code..." << std::endl;
+    
+    // Start the radio f=433MHz 
+    int state = radio.begin(433.0);
+
+    if (state == RADIOLIB_ERR_NONE) {
+        std::cout << "Sucess! Chip SX1268 based detected " << std::endl;
+    } else {
+        std::cout << " Error on starting comm. Error code: " << state << std::endl;
+        
+        // Debug for pins
+        if (state == -2) {
+            std::cout << "Erro -2: Chip not found. Verify NSS (GPIO8) e SPI (9, 10, 11)." << std::endl;
+        } else if (state == -5) {
+            std::cout << "Erro -5: Bus Timeout. Verify  BUSY (GPIO17) pin." << std::endl;
+        }
+        return 1;
+    }
+
+    return 0;
+}
+
+```
+
+### compile the program
+
+Obs: must be on `basicTest` folder.
+
+```bash
+pi@raspberrypi:~/Desktop/lora_module_1268F30_comm/basicTest $ g++ main.cpp -o basicTest -I../RadioLib/src -I../RadioLib/src/hal/RPi -L../RadioLib/build -lRadioLib -llgpio -lpthread
+```
+as a result a file "basicTest" is created.
+
+## Run the program
+
+```bash
+sudo ./basicTest
+```
+RESULT 1: 
+
+the code works, eventhough there is a error using pin 8 of RPI, with a control conflict between SPI RPI5 bus and RadioLIb via PiHal
+
+```bash
+
+sudo ./basicTest 
+[SX1268] Starting basic code...
+Could not claim pin 8 for mode 1: GPIO busy
+Error writing value to pin 8: GPIO busy
+Error writing value to pin 8: GPIO busy
+...
+Sucess! Chip SX1268 based detected
+pi@raspberrypi:~/Desktop/lora_module_1268F30_comm/basicTest $ 
+```
+
+Solution: change the NSS to another pin on RPI-5 for instance GPIO 5.
+
+
+
+PIN map 
+
+
+| LoRa RF1268F30 | Raspberry Pi 5 (GPIO) |
+|---|---|
+| VCC | 3.3V ou 5V (dependendo do módulo) |
+| GND | GND |
+| SCK | GPIO11 |
+| MISO | GPIO9 |
+| MOSI | GPIO10 |
+| NSS (CS) | GPIO5 |
+| DIO1 | GPIO22 |
+| RESET | GPIO27 |
+| BUSY | GPIO17 |
+
+New main.cpp code saved
+
+```c++
+#include <RadioLib.h>
+#include <PiHal.h>
+#include <iostream>
+
+// Pin map :
+// NSS (CS): GPIO 5
+// DIO1:     GPIO 22
+// RESET:    GPIO 27
+// BUSY:     GPIO 17
+
+// Inicialize HAL for  Raspberry Pi using SPI0 bus
+PiHal* hal = new PiHal(0);
+
+// Instantiates radio SX1268 
+// Module(hal, nss, dio1, rst, busy)
+SX1268 radio = new Module(hal, 5, 22, 27, 17);
+
+int main() {
+    std::cout << "[SX1268] Starting  basic code..." << std::endl;
+    
+    // Start the radio f=433MHz 
+    int state = radio.begin(433.0);
+
+    if (state == RADIOLIB_ERR_NONE) {
+        std::cout << "Sucess! Chip SX1268 based detected " << std::endl;
+    } else {
+        std::cout << " Error on starting comm. Error code: " << state << std::endl;
+        
+        // Debug for pins
+        if (state == -2) {
+            std::cout << "Erro -2: Chip not found. Verify NSS (GPIO8) e SPI (9, 10, 11)." << std::endl;
+        } else if (state == -5) {
+            std::cout << "Erro -5: Bus Timeout. Verify  BUSY (GPIO17) pin." << std::endl;
+        }
+        return 1;
+    }
+
+    return 0;
+}
+
+```
+Running the test ...ok 
+
+```bash
+pi@raspberrypi:~/Desktop/lora_module_1268F30_comm/basicTest $ sudo ./basicTest 
+[SX1268] Starting  basic code...
+Sucess! Chip SX1268 based detected 
+pi@raspberrypi:~/Desktop/lora_module_1268F30_comm/basicTest $ 
+```
+
+
+
