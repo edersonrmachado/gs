@@ -93,21 +93,21 @@ pi@raspberrypi:~/Desktop/lora_module_1268F30_comm/transmitTest $
 We use the following flowgraph, called `RTL_lora_rx`, to receive with a RTL-SDR v3 in the host computer
 
 <p align="center">
-<img src="fig_tx_test/flowgraph.png", alt="drawing" width="800"/>
+<img src="figures/flowgraph.png", alt="drawing" width="800"/>
 </p>
 
 
 ### Running GNU Radio flowgraph  without sending data from RPI+1268F30:
 
 <p align="center">
-<img src="fig_tx_test/transmit_0.png", alt="drawing" width="800"/>
+<img src="figures/transmit_0.png", alt="drawing" width="800"/>
 </p>
 
 
 ### Running GNU Radio flowgraph  sending data from RPI+1268F30:
 
 <p align="center">
-<img src="fig_tx_test/transmit_1.png", alt="drawing" width="800"/>
+<img src="figures/transmit_1.png", alt="drawing" width="800"/>
 </p>
 
 
