@@ -1,14 +1,6 @@
 # LoRa module 1268F30-433 install
 
-The objective of this project is to enable the SPI communication of G-Nice RF 1268F30-433 MHz module with the Raspbery Pi 5, as seen in the Fig.1:
-
-
-
-<p align="center">
-<img src="figures/fig2.png", alt="drawing" width="450"/>
-</p>
-
-<p align="center"><em>Fig. 1. aaaa </em></p>
+The objective of this project is to enable the SPI communication of G-Nice RF 1268F30-433 MHz module with the Raspbery Pi 5. This file is a draft, it will be rewritten soon.
 
 ## Connections
 In accordance with the 1268F30 manual the SPI has an internal regulator to 3V3 operation:
@@ -55,7 +47,7 @@ In bidirectional SPI mode the same SPI standard is implemented, except that a si
 [source Fig](https://www.etechnophiles.com/raspberry-pi-5-gpio-pinout/)  
 
 <p align="center">
-<img src="figures/rpi_pins2.png", alt="drawing" width="800"/>
+<img src="figures/rpi_pins2.png", alt="drawing" width="500"/>
 </p>
 
 
@@ -429,12 +421,16 @@ int main() {
 ```
 Running the test ...ok 
 
-```bash
-pi@raspberrypi:~/Desktop/lora_module_1268F30_comm/basicTest $ sudo ./basicTest 
-[SX1268] Starting  basic code...
-Sucess! Chip SX1268 based detected 
+```bash  
+pi@raspberrypi:~/Desktop/lora_module_1268F30_comm/basicTest $ sudo ./basicTest   
+[SX1268] Starting  basic code...  
+Sucess! Chip SX1268 based detected   
 pi@raspberrypi:~/Desktop/lora_module_1268F30_comm/basicTest $ 
 ```
 
 
 
+### Conclusion
+
+This basic test has successfully run. It implements a SPI communication where the RPI5 is the controller and Gnice RF 1268F30 is the  peripheral. The code just identifies that the SPI is ok returning a SX1268 module based chip detect message. This result shows that the pin connections of RPI-5 and NiceRf 1268F30 are ok. It was necessary change the CS (NSS) pin from GPIO8 to GPIO5 on RPI5 due to a library conflict error. 
+From this basic test is now possible to advance to specif tests. 
