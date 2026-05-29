@@ -1,24 +1,22 @@
 ### How to change Network in a RPI5  (already burned)
 
-1. Reading  and changing config SD card config
-
-When read the RPI5 SD card is identified as `"rootfs"`:
-
-<p align="center">
-<img src="figures/files.png", alt="drawing" width="800"/>
-</p>
-
-2. Go to this folder
-   `/etc/NetworkManager/system-connections/`
+1. Use a cable connection to access the RPI via ssh
 
 
-<p align="center">
-<img src="figures/files2.png", alt="drawing" width="800"/>
-</p>
+2. To scan available wi-fi 
+```bash 
+pi@raspberrypi:~ $ nmcli dev wifi list
+IN-USE  BSSID              SSID               MODE   CHAN  RATE        SIGNAL  >
+        3C:6A:D2:5D:30:E4  AgroBot            Infra  4     270 Mbit/s  100     >
+        3E:6A:D2:59:30:E4  --                 Infra  4     270 Mbit/s  100     >
+        3C:6A:D2:5D:30:E6  AgroBot            Infra  36    270 Mbit/s  100     >
+        3E:6A:D2:6D:30:E6  --                 Infra  36    270 Mbit/s  100
+```
+3. To access AgroBot wi-fi net:
 
-3. Open this folder in terminal and creates a file named `wifi.nmconnection`
+```bash
+pi@raspberrypi:~ $ sudo nmcli dev wifi connect AgroBot password xxxxxx
+Device 'wlan0' successfully activated with 'b5a796dd-7c8e-40bf-82e2-101dbc56a1be'.
 
-<p align="center">
-<img src="figures/files3.png", alt="drawing" width="800"/>
-</p>
+```
 
