@@ -6,24 +6,36 @@
 #
 # GNU Radio Python Flow Graph
 # Title: RTL_lora_rx
-# GNU Radio version: 3.10.7.0
+# GNU Radio version: 3.10.1.1
 
 from packaging.version import Version as StrictVersion
+
+if __name__ == '__main__':
+    import ctypes
+    import sys
+    if sys.platform.startswith('linux'):
+        try:
+            x11 = ctypes.cdll.LoadLibrary('libX11.so')
+            x11.XInitThreads()
+        except:
+            print("Warning: failed to XInitThreads()")
+
 from PyQt5 import Qt
 from gnuradio import qtgui
-from gnuradio import gr
 from gnuradio.filter import firdes
+import sip
+from gnuradio import gr
 from gnuradio.fft import window
 import sys
 import signal
-from PyQt5 import Qt
 from argparse import ArgumentParser
 from gnuradio.eng_arg import eng_float, intx
 from gnuradio import eng_notation
 from gnuradio import soapy
-import sip
 
 
+
+from gnuradio import qtgui
 
 class RTL_lora_rx(gr.top_block, Qt.QWidget):
 
@@ -34,8 +46,8 @@ class RTL_lora_rx(gr.top_block, Qt.QWidget):
         qtgui.util.check_set_qss()
         try:
             self.setWindowIcon(Qt.QIcon.fromTheme('gnuradio-grc'))
-        except BaseException as exc:
-            print(f"Qt GUI: Could not set Icon: {str(exc)}", file=sys.stderr)
+        except:
+            pass
         self.top_scroll_layout = Qt.QVBoxLayout()
         self.setLayout(self.top_scroll_layout)
         self.top_scroll = Qt.QScrollArea()
@@ -55,8 +67,8 @@ class RTL_lora_rx(gr.top_block, Qt.QWidget):
                 self.restoreGeometry(self.settings.value("geometry").toByteArray())
             else:
                 self.restoreGeometry(self.settings.value("geometry"))
-        except BaseException as exc:
-            print(f"Qt GUI: Could not restore geometry: {str(exc)}", file=sys.stderr)
+        except:
+            pass
 
         ##################################################
         # Variables
@@ -68,46 +80,87 @@ class RTL_lora_rx(gr.top_block, Qt.QWidget):
         ##################################################
         # Blocks
         ##################################################
+        self.soapy_rtlsdr_source_0_0 = None
+        dev = 'driver=rtlsdr'
+        stream_args = ''
+        tune_args = ['']
+        settings = ['']
 
+        self.soapy_rtlsdr_source_0_0 = soapy.source(dev, "fc32", 1, "serial=00000002",
+                                  stream_args, tune_args, settings)
+        self.soapy_rtlsdr_source_0_0.set_sample_rate(0, samp_rate)
+        self.soapy_rtlsdr_source_0_0.set_gain_mode(0, False)
+        self.soapy_rtlsdr_source_0_0.set_frequency(0, freq)
+        self.soapy_rtlsdr_source_0_0.set_frequency_correction(0, 0)
+        self.soapy_rtlsdr_source_0_0.set_gain(0, 'TUNER', 10)
         self.soapy_rtlsdr_source_0 = None
         dev = 'driver=rtlsdr'
         stream_args = ''
         tune_args = ['']
         settings = ['']
 
-        def _set_soapy_rtlsdr_source_0_gain_mode(channel, agc):
-            self.soapy_rtlsdr_source_0.set_gain_mode(channel, agc)
-            if not agc:
-                  self.soapy_rtlsdr_source_0.set_gain(channel, self._soapy_rtlsdr_source_0_gain_value)
-        self.set_soapy_rtlsdr_source_0_gain_mode = _set_soapy_rtlsdr_source_0_gain_mode
-
-        def _set_soapy_rtlsdr_source_0_gain(channel, name, gain):
-            self._soapy_rtlsdr_source_0_gain_value = gain
-            if not self.soapy_rtlsdr_source_0.get_gain_mode(channel):
-                self.soapy_rtlsdr_source_0.set_gain(channel, gain)
-        self.set_soapy_rtlsdr_source_0_gain = _set_soapy_rtlsdr_source_0_gain
-
-        def _set_soapy_rtlsdr_source_0_bias(bias):
-            if 'biastee' in self._soapy_rtlsdr_source_0_setting_keys:
-                self.soapy_rtlsdr_source_0.write_setting('biastee', bias)
-        self.set_soapy_rtlsdr_source_0_bias = _set_soapy_rtlsdr_source_0_bias
-
-        self.soapy_rtlsdr_source_0 = soapy.source(dev, "fc32", 1, '',
+        self.soapy_rtlsdr_source_0 = soapy.source(dev, "fc32", 1, "serial=00000001",
                                   stream_args, tune_args, settings)
-
-        self._soapy_rtlsdr_source_0_setting_keys = [a.key for a in self.soapy_rtlsdr_source_0.get_setting_info()]
-
         self.soapy_rtlsdr_source_0.set_sample_rate(0, samp_rate)
+        self.soapy_rtlsdr_source_0.set_gain_mode(0, False)
         self.soapy_rtlsdr_source_0.set_frequency(0, freq)
         self.soapy_rtlsdr_source_0.set_frequency_correction(0, 0)
-        self.set_soapy_rtlsdr_source_0_bias(bool(False))
-        self._soapy_rtlsdr_source_0_gain_value = 20
-        self.set_soapy_rtlsdr_source_0_gain_mode(0, bool(False))
-        self.set_soapy_rtlsdr_source_0_gain(0, 'TUNER', 20)
+        self.soapy_rtlsdr_source_0.set_gain(0, 'TUNER', 10)
+        self.qtgui_time_sink_x_0_0 = qtgui.time_sink_c(
+            1024, #size
+            samp_rate, #samp_rate
+            "RTL RX 2", #name
+            1, #number of inputs
+            None # parent
+        )
+        self.qtgui_time_sink_x_0_0.set_update_time(0.10)
+        self.qtgui_time_sink_x_0_0.set_y_axis(-1, 1)
+
+        self.qtgui_time_sink_x_0_0.set_y_label('Amplitude', "")
+
+        self.qtgui_time_sink_x_0_0.enable_tags(True)
+        self.qtgui_time_sink_x_0_0.set_trigger_mode(qtgui.TRIG_MODE_FREE, qtgui.TRIG_SLOPE_POS, 0.0, 0, 0, "")
+        self.qtgui_time_sink_x_0_0.enable_autoscale(False)
+        self.qtgui_time_sink_x_0_0.enable_grid(False)
+        self.qtgui_time_sink_x_0_0.enable_axis_labels(True)
+        self.qtgui_time_sink_x_0_0.enable_control_panel(False)
+        self.qtgui_time_sink_x_0_0.enable_stem_plot(False)
+
+
+        labels = ['Signal 1', 'Signal 2', 'Signal 3', 'Signal 4', 'Signal 5',
+            'Signal 6', 'Signal 7', 'Signal 8', 'Signal 9', 'Signal 10']
+        widths = [1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1]
+        colors = ['blue', 'red', 'green', 'black', 'cyan',
+            'magenta', 'yellow', 'dark red', 'dark green', 'dark blue']
+        alphas = [1.0, 1.0, 1.0, 1.0, 1.0,
+            1.0, 1.0, 1.0, 1.0, 1.0]
+        styles = [1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1]
+        markers = [-1, -1, -1, -1, -1,
+            -1, -1, -1, -1, -1]
+
+
+        for i in range(2):
+            if len(labels[i]) == 0:
+                if (i % 2 == 0):
+                    self.qtgui_time_sink_x_0_0.set_line_label(i, "Re{{Data {0}}}".format(i/2))
+                else:
+                    self.qtgui_time_sink_x_0_0.set_line_label(i, "Im{{Data {0}}}".format(i/2))
+            else:
+                self.qtgui_time_sink_x_0_0.set_line_label(i, labels[i])
+            self.qtgui_time_sink_x_0_0.set_line_width(i, widths[i])
+            self.qtgui_time_sink_x_0_0.set_line_color(i, colors[i])
+            self.qtgui_time_sink_x_0_0.set_line_style(i, styles[i])
+            self.qtgui_time_sink_x_0_0.set_line_marker(i, markers[i])
+            self.qtgui_time_sink_x_0_0.set_line_alpha(i, alphas[i])
+
+        self._qtgui_time_sink_x_0_0_win = sip.wrapinstance(self.qtgui_time_sink_x_0_0.qwidget(), Qt.QWidget)
+        self.top_layout.addWidget(self._qtgui_time_sink_x_0_0_win)
         self.qtgui_time_sink_x_0 = qtgui.time_sink_c(
             1024, #size
             samp_rate, #samp_rate
-            "Rx time samples", #name
+            "RTL Rx1", #name
             1, #number of inputs
             None # parent
         )
@@ -161,6 +214,7 @@ class RTL_lora_rx(gr.top_block, Qt.QWidget):
         # Connections
         ##################################################
         self.connect((self.soapy_rtlsdr_source_0, 0), (self.qtgui_time_sink_x_0, 0))
+        self.connect((self.soapy_rtlsdr_source_0_0, 0), (self.qtgui_time_sink_x_0_0, 0))
 
 
     def closeEvent(self, event):
@@ -177,7 +231,9 @@ class RTL_lora_rx(gr.top_block, Qt.QWidget):
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
         self.qtgui_time_sink_x_0.set_samp_rate(self.samp_rate)
+        self.qtgui_time_sink_x_0_0.set_samp_rate(self.samp_rate)
         self.soapy_rtlsdr_source_0.set_sample_rate(0, self.samp_rate)
+        self.soapy_rtlsdr_source_0_0.set_sample_rate(0, self.samp_rate)
 
     def get_gain_rx(self):
         return self.gain_rx
@@ -191,6 +247,7 @@ class RTL_lora_rx(gr.top_block, Qt.QWidget):
     def set_freq(self, freq):
         self.freq = freq
         self.soapy_rtlsdr_source_0.set_frequency(0, self.freq)
+        self.soapy_rtlsdr_source_0_0.set_frequency(0, self.freq)
 
 
 

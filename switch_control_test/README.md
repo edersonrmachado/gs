@@ -12,3 +12,8 @@ Equipment list:
 
 ### General description
 The RPI-5 is used to control via GPIO the RF Switch operation. Then we must to set up a GPIO pin as output and connect to 
+
+
+## First Test using GPIOx to activate a led
+
+Ok 
