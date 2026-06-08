@@ -1,6 +1,6 @@
 # GPIO activation test
 
-This is a basic test to activate a led via GPIO each time a packet is transmitted using LoRa Gnice RF 1268F30.
+This is a basic test to activate a led via GPIO each time a packet is transmitted using LoRa Gnice RF 1268F30. The general 
 
 
 

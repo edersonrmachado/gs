@@ -13,7 +13,7 @@ SX1268 radio = new Module(hal, 5, 22, 27, 17);
 
 int main() {
     hal->pinMode(SWITCH_RX_PIN, PI_OUTPUT); // config sw. pin as output 
-
+Évry-Courcouronnes, França
     std::cout << "Initializing SX1268..." << std::endl;
 
     int state = radio.begin(

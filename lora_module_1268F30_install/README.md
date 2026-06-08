@@ -47,7 +47,7 @@ In bidirectional SPI mode the same SPI standard is implemented, except that a si
 [source Fig](https://www.etechnophiles.com/raspberry-pi-5-gpio-pinout/)  
 
 <p align="center">
-<img src="figures/rpi_pins2.png", alt="drawing" width="500"/>
+<img src="figures/rpi_pins2.png", alt="drawing" width="700"/>
 </p>
 
 
@@ -56,7 +56,7 @@ In bidirectional SPI mode the same SPI standard is implemented, except that a si
 
 
 References:   
-[1268F30 manuals page](https://www.nicerf.com/lora-module/'sx1268-wireless-module-lora1268f30.html)
+[1268F30 manuals page](https://www.nicerf.com/lora-module/sx1268-wireless-module-lora1268f30.html)
 
 
 
